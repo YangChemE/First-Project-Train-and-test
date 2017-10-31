@@ -1,0 +1,81 @@
+import pandas as pd
+import numpy as np
+import sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from random import *
+
+##read the data 
+df = pd.read_csv("https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data", 
+                        names = ["class","cap-shape","cap-surface","cap-color","bruises","odor","gill-attachment","gill-spacing",
+                                "gill-size","gill-color","stalk-shape","stalk-root","stalk-surface-above-ring",
+                                "stalk-surface-below-ring","stalk-color-above-ring","stalk-color-below-ring","veil-type",
+                                "veil-color","ring-number","ring-type","spore-print-color","population","habitat"],
+                        header = None)
+
+##remove the feature with missing values
+df = df.drop('stalk-root',1)
+
+##encoding data into numecia values
+for i in range (22):
+    enc = LabelEncoder()
+    enc.fit(df[df.columns[i]])
+    df[df.columns[i]] = enc.transform(df[df.columns[i]])
+    
+
+
+train, test = train_test_split(df,train_size = 0.7)
+
+
+
+#Class = df['class']
+#Features = df.drop['class']
+##transfer values of each features into a 1-hot vector for train set 
+#i = 1 
+#data = df[df.columns[0]]
+#print(data)
+#data_train = []
+#while i <= 21: 
+#    #store the numeric city vector temperorily
+#    temp= df[df.columns[i]]
+
+#    #generate the 1-hot vector for the city
+#    a = df[df.columns[i]]
+#    b = np.zeros((len(temp), (max(temp)+1)))
+#    b[np.arange(len(temp)), a] = 1
+
+#    data = np.mat(np.column_stack((data,b)))
+#    i = i+1
+#df = data
+#print(np.mat(df).shape)
+    
+#train, test = train_test_split(df,train_size = 0.7)
+    
+data_train = train.drop('class',1)
+data_test = test.drop('class',1)
+Class_train = train['class']
+Class_test = test['class']
+
+
+
+
+
+target = Class_train
+train = data_train
+test = data_test
+
+X_train = data_train
+y_train = Class_train
+X_test = data_test
+y_test = Class_test
+
+from sklearn import metrics
+
+
+from sklearn.linear_model import LogisticRegression
+clf = LogisticRegression()
+clf.fit(train, target)
+a=clf.score(train, target)
+b=clf.score(X_test, y_test)
+print("training accuracy: ",a," testing accuracy: ",b)
+
